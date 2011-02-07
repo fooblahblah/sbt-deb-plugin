@@ -12,21 +12,21 @@ trait DebProject extends DefaultProject {
   def debControlFiles = new File(debControlDir).listFiles
 
   def debContents = Array[File](jarPath.asFile)
-  
+
   lazy val deb = debAction
   def debAction = debTask dependsOn(`package`)
 
-  lazy val debTask = task { 
-    val data = debContents.map { f => 
-      if(f.isFile) 
+  lazy val debTask = task {
+    val data = debContents.map { f =>
+      if(f.isFile)
         new DataProducerFile(f, null, null, null).asInstanceOf[DataProducer]
       else
-        new DataProducerDirectory(f, null, null, null).asInstanceOf[DataProducer]                         
+        new DataProducerDirectory(f, null, null, null).asInstanceOf[DataProducer]
     }.toArray
     val processor = new Processor(new SbtConsole, null)
     val packageDescriptor = processor.createDeb(debControlFiles, data, debDestFile, "none")
-    scalaPrintln("Create debian package in " + debDestFile)
-    None 
+    scalaPrintln("Creating debian package in " + debDestFile)
+    None
   }
 }
 
